@@ -61,10 +61,15 @@
                                 <p class="card-text">{{ $god->short_description }}</p>
                                 <p class="detail-date">Опубликовано: {{ $god->published_at?->format('d.m.Y') ?? 'не указано' }}</p>
                                 <div class="card-actions mt-auto"><a class="card-more js-god-detail"
-                                        href="{{ route('gods.show', $god) }}" data-edit-url="{{ route('gods.edit', $god) }}" data-delete-url="{{ route('gods.destroy', $god) }}">Быстрый просмотр <span
-                                            aria-hidden="true">↗</span></a><a class="card-edit"
+                                        href="{{ route('gods.show', $god) }}"
+                                        @can('manage-god', $god) data-edit-url="{{ route('gods.edit', $god) }}" data-delete-url="{{ route('gods.destroy', $god) }}" @endcan>Быстрый просмотр <span
+                                            aria-hidden="true">↗</span></a>
+                                    @can('manage-god', $god)
+                                    <a class="card-edit"
                                         href="{{ route('gods.edit', $god) }}"
-                                        aria-label="Редактировать: {{ $god->name }}" title="Редактировать">✎</a></div>
+                                        aria-label="Редактировать: {{ $god->name }}" title="Редактировать">✎</a>
+                                    @endcan
+                                </div>
                             </div>
                         </article>
                     </div>
@@ -72,8 +77,10 @@
                     <div class="col-12">
                         <div class="empty-state"><span aria-hidden="true">Ω</span>
                             <h3>Первая история — за вами</h3>
+                            @auth
                             <p>Добавьте бога, чтобы начать свою коллекцию.</p><a class="btn btn-primary"
                                 href="{{ route('gods.create') }}">Добавить бога</a>
+                            @endauth
                         </div>
                     </div>
                 @endforelse
@@ -97,8 +104,8 @@
                     <div class="modal-navigation me-auto"><button class="btn btn-outline-primary" id="previousGod"
                             type="button" aria-label="Предыдущий бог">←</button><button class="btn btn-outline-primary"
                             id="nextGod" type="button" aria-label="Следующий бог">→</button></div>
-                    <a class="btn btn-primary" id="godModalEdit" href="{{ route('gods.index') }}">Редактировать</a>
-                    <form id="godModalDeleteForm" action="{{ route('gods.index') }}" method="POST" class="m-0"
+                    <a class="btn btn-primary" id="godModalEdit" hidden>Редактировать</a>
+                    <form id="godModalDeleteForm" hidden method="POST" class="m-0"
                           data-confirm-delete>
                         @csrf @method('DELETE')
                         <button type="submit" class="btn btn-outline-danger">Удалить</button>

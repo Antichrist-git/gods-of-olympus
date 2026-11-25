@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Support\GodName;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -11,6 +12,16 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class God extends Model
 {
     use SoftDeletes;
+
+    protected static function booted(): void
+    {
+        // Проверяем права и при записи через Eloquent вне контроллера.
+        $checkOwner = static function (God $god): void {
+            Gate::authorize('manage-god', $god);
+        };
+        static::updating($checkOwner);
+        static::deleting($checkOwner);
+    }
 
     public function user(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {

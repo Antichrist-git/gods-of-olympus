@@ -80,12 +80,20 @@ if (modalElement) {
         controller = new AbortController();
         const signal = controller.signal;
         const card = link.closest('.god-card');
-        const actionLink = card.querySelector('.card-more');
+        const { editUrl, deleteUrl } = link.dataset;
         const name = card.querySelector('.card-title').textContent.trim();
         title.textContent = name;
-        edit.href = actionLink.dataset.editUrl;
-        deleteForm.action = actionLink.dataset.deleteUrl;
-        deleteForm.dataset.godName = name;
+        edit.hidden = !editUrl;
+        deleteForm.hidden = !deleteUrl;
+        if (editUrl && deleteUrl) {
+            edit.href = editUrl;
+            deleteForm.action = deleteUrl;
+            deleteForm.dataset.godName = name;
+        } else {
+            edit.removeAttribute('href');
+            deleteForm.removeAttribute('action');
+            delete deleteForm.dataset.godName;
+        }
         body.textContent = 'Загружаем историю…';
         body.setAttribute('aria-busy', 'true');
         modal.show();

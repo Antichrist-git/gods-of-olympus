@@ -10,7 +10,8 @@ Route::get('gods/check-name', [GodController::class, 'checkName'])
     ->name('gods.check-name')
     ->middleware('throttle:60,1');
 Route::resource('gods', GodController::class)
-    ->middlewareFor(['create', 'store', 'edit', 'update', 'destroy'], 'auth');
+    ->middlewareFor(['create', 'store', 'edit', 'update', 'destroy'], 'auth')
+    ->middlewareFor(['edit', 'update', 'destroy'], 'can:manage-god,god');
 
 Route::middleware('auth')->group(function () {
     Route::get('users', [CollectionController::class, 'index'])->name('collections.index');

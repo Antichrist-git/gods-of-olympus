@@ -5,12 +5,15 @@
         <nav aria-label="Хлебные крошки" class="breadcrumbs"><a href="{{ route('gods.index') }}">Пантеон</a><span
                 aria-hidden="true">/</span><span aria-current="page">{{ $god->name }}</span></nav>
         <div class="detail-toolbar"><a href="{{ route('gods.index') }}" class="back-link">← Назад к коллекции</a>
+            @can('manage-god', $god)
             <div class="d-flex gap-2"><a href="{{ route('gods.edit', $god) }}"
                     class="btn btn-primary">Редактировать</a><button type="button" class="btn btn-outline-danger"
                     data-bs-toggle="modal" data-bs-target="#deleteModal">Удалить</button></div>
+            @endcan
         </div>
         <article class="detail-panel">@include('gods.partials.details')</article>
     </main>
+    @can('manage-god', $god)
     <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteTitle" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
@@ -29,4 +32,5 @@
             </div>
         </div>
     </div>
+    @endcan
 @endsection
