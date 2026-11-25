@@ -22,9 +22,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        // Сравниваем пользователя с владельцем сохранённой записи.
+        // Администратор может управлять карточками всех владельцев.
         Gate::define('manage-god', fn (User $user, God $god) =>
-            $user->id === (int) $god->getRawOriginal('user_id')
+            $user->is_admin || $user->id === (int) $god->getRawOriginal('user_id')
         );
     }
 }
