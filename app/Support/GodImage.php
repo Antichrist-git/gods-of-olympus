@@ -82,7 +82,7 @@ class GodImage {
 
     public static function removeUploaded(?string $path): void {
         // Исходные изображения пяти богов не трогаем.
-        $seedImages = ['Zeus.jpg', 'Poseidon.jpg', 'Hades.jpg', 'Athena.jpg', 'Apollonian.jpg'];
+        $seedImages = ['Zeus.jpg', 'Poseidon.jpg', 'Hades.jpg', 'Athena.jpg', 'Apollonian.jpg', 'olympus.jpg'];
         if ($path && preg_match('~^gods/[a-z0-9_-]+\.(?:jpe?g|png|webp)$~i', $path)
             && !in_array(basename($path), $seedImages, true)) {
             Storage::disk('public')->delete($path);

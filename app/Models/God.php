@@ -19,6 +19,13 @@ class God extends Model
         $checkOwner = static function (God $god): void {
             Gate::authorize('manage-god', $god);
         };
+        // Обе операции доступны только администратору и только после мягкого удаления.
+        $checkArchived = static function (God $god): void {
+            Gate::authorize('manage-archive');
+            abort_unless($god->trashed(), 409);
+        };
+        static::restoring($checkArchived);
+        static::forceDeleting($checkArchived);
         static::updating($checkOwner);
         static::deleting($checkOwner);
     }

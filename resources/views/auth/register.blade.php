@@ -13,6 +13,14 @@
                     @error('name') <div class="invalid-feedback">{{ $message }}</div> @enderror
                 </div>
                 <div class="mb-3">
+                    <label class="form-label" for="username">Имя в адресе коллекции</label>
+                    <input id="username" name="username" autocomplete="username" required maxlength="40"
+                           pattern="[a-z][a-z0-9_\-]{2,39}" value="{{ old('username') }}"
+                           class="form-control @error('username') is-invalid @enderror">
+                    @error('username') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                    <small>От 3 до 40 символов. Начните с латинской буквы в нижнем регистре. Можно добавить цифры, дефис и подчёркивание.</small>
+                </div>
+                <div class="mb-3">
                     <label class="form-label" for="email">Электронная почта</label>
                     <input id="email" name="email" type="email" autocomplete="email" required
                            value="{{ old('email') }}" class="form-control @error('email') is-invalid @enderror">

@@ -18,6 +18,9 @@
             @else
                 <a href="{{ route('collections.index') }}">Коллекции</a>
                 <a href="{{ route('collections.show', auth()->user()) }}">{{ auth()->user()->name }}</a>
+                @can('manage-archive')
+                    <a href="{{ route('archive.index') }}">Удалённые</a>
+                @endcan
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf
                     <button class="btn btn-outline-primary btn-sm" type="submit">Выйти</button>

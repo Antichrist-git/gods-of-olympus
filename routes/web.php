@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ArchivedGodController;
 use App\Http\Controllers\CollectionController;
 use App\Http\Controllers\GodController;
 use Illuminate\Support\Facades\Route;
@@ -15,7 +16,14 @@ Route::resource('gods', GodController::class)
 
 Route::middleware('auth')->group(function () {
     Route::get('users', [CollectionController::class, 'index'])->name('collections.index');
-    Route::get('users/{user}/gods', [CollectionController::class, 'show'])->name('collections.show');
+    Route::middleware('can:manage-archive')->prefix('archive')->name('archive.')->group(function () {
+        Route::get('/', [ArchivedGodController::class, 'index'])->name('index');
+        Route::patch('{id}', [ArchivedGodController::class, 'restore'])->whereNumber('id')->name('restore');
+        Route::delete('{id}', [ArchivedGodController::class, 'destroy'])->whereNumber('id')->name('destroy');
+    });
+
+    Route::get('users/{id}/gods', [CollectionController::class, 'legacy'])->whereNumber('id');
+    Route::get('users/{user:username}/gods', [CollectionController::class, 'show'])->name('collections.show');
 });
 
 require __DIR__.'/auth.php';
