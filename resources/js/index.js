@@ -2,7 +2,6 @@ import $ from 'jquery';
 import { Modal } from 'bootstrap';
 
 window.$ = window.jQuery = $;
-window.__wt3EnhancedBundle = true; // Сборка уже включает новую логику форм и Modal.
 
 // Фильтры работают по уже полученным из БД карточкам.
 function filterGods() {
@@ -25,35 +24,6 @@ $('#resetFilters').on('click', () => {
     $('#godType').val('');
     filterGods();
     document.getElementById('godSearch')?.focus();
-});
-
-// HTML5-проверка помогает сразу, но все правила обязательно повторяются на сервере.
-document.querySelectorAll('.needs-validation').forEach((form) => {
-    const textFields = form.querySelectorAll('[data-requires-letters]');
-    const validateMeaningfulText = (field) => {
-        const value = field.value.trim();
-        const hasLetters = /\p{L}/u.test(value);
-        field.setCustomValidity(value && !hasLetters
-            ? 'Поле должно содержать буквы, а не только цифры или знаки.' : '');
-    };
-    textFields.forEach((field) => {
-        field.addEventListener('input', () => validateMeaningfulText(field));
-        validateMeaningfulText(field);
-    });
-    form.addEventListener('submit', (event) => {
-        textFields.forEach(validateMeaningfulText);
-        if (!form.checkValidity()) {
-            event.preventDefault();
-            event.stopPropagation();
-            form.querySelector(':invalid')?.focus();
-        }
-        form.classList.add('was-validated');
-    });
-    form.querySelectorAll('input,textarea,select').forEach((field) => {
-        field.addEventListener('input', () => {
-            if (field.validity.valid) field.classList.remove('is-invalid');
-        });
-    });
 });
 
 // Удаление требует подтверждения; форма защищена CSRF и отправляет DELETE.
@@ -83,10 +53,6 @@ if (imageInput) {
         if (objectUrl) URL.revokeObjectURL(objectUrl);
         const file = imageInput.files[0];
         const valid = !file || (['image/jpeg', 'image/png', 'image/webp'].includes(file.type) && file.size <= 5 * 1024 * 1024);
-        imageInput.setCustomValidity(valid ? '' : 'Выберите JPG, PNG или WebP размером до 5 МБ.');
-        imageInput.classList.toggle('is-invalid', !valid);
-        if (!valid) document.getElementById('imageError').textContent = imageInput.validationMessage;
-        else document.getElementById('imageError').textContent = 'Выберите изображение JPG, PNG или WebP до 5 МБ.';
         objectUrl = file && valid ? URL.createObjectURL(file) : null;
         const source = objectUrl || original;
         if (source) preview.src = source;
@@ -107,6 +73,7 @@ if (modalElement) {
     let activeLink;
     let controller;
 
+    // Загружает подробности и привязывает кнопки действий к выбранному богу.
     async function openGod(link) {
         activeLink = link;
         controller?.abort();
@@ -139,9 +106,13 @@ if (modalElement) {
             if (!signal.aborted) body.setAttribute('aria-busy', 'false');
         }
     }
+
+    // У каждой видимой карточки есть одна ссылка быстрого просмотра.
     function stepGod(direction) {
         const links = [...document.querySelectorAll('.god-column:not([hidden]) .js-god-detail')];
-        if (links.length) openGod(links[(links.indexOf(activeLink) + direction + links.length) % links.length]);
+        if (!links.length) return;
+        const nextIndex = (links.indexOf(activeLink) + direction + links.length) % links.length;
+        openGod(links[nextIndex]);
     }
     $('.js-god-detail').on('click', function (event) {
         if (event.ctrlKey || event.metaKey || event.shiftKey || event.altKey || event.button !== 0) return;

@@ -44,7 +44,7 @@
                     <div class="god-column col-12 col-md-6 col-lg-4" data-search="{{ $god->name }} {{ $god->type }}"
                         data-type="{{ $god->type }}">
                         <article class="card god-card h-100">
-                            <a class="card-art js-god-detail" href="{{ route('gods.show', $god) }}"
+                            <a class="card-art" href="{{ route('gods.show', $god) }}"
                                 aria-label="{{ $god->name }} — подробности">
                                 @if ($god->image_path)
                                     <img src="{{ asset('storage/' . $god->image_path) }}" class="god-image"
@@ -56,7 +56,7 @@
                             </a>
                             <div class="card-body d-flex flex-column">
                                 <p class="god-type">{{ $god->type }}</p>
-                                <h3 class="card-title"><a class="js-god-detail" href="{{ route('gods.show', $god) }}">{{ $god->name }}</a>
+                                <h3 class="card-title"><a href="{{ route('gods.show', $god) }}">{{ $god->name }}</a>
                                 </h3>
                                 <p class="card-text">{{ $god->short_description }}</p>
                                 <p class="detail-date">Опубликовано: {{ $god->published_at?->format('d.m.Y') ?? 'не указано' }}</p>
@@ -104,8 +104,6 @@
                         <button type="submit" class="btn btn-outline-danger">Удалить</button>
                     </form>
                     <button type="button" class="btn btn-outline-primary" data-bs-dismiss="modal">Закрыть</button>
-                    {{-- Совместимость с JS, который был собран в приложенном архиве; визуально ссылки нет. --}}
-                    <a id="godFullPage" href="{{ route('gods.index') }}" hidden tabindex="-1" aria-hidden="true"></a>
                 </div>
             </div>
         </div>

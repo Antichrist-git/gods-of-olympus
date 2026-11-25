@@ -12,6 +12,7 @@ const watchBlade = {
 
 // Bootstrap + собственный SCSS; jQuery + Bootstrap JS. Выход — public.
 mix.js('resources/js/index.js', 'public/js')
+    .copy('resources/js/live-validation.js', 'public/js/live-validation.js')
     .sass('resources/sass/styles.scss', 'public/css')
     .options({ processCssUrls: false })
     .disableNotifications()

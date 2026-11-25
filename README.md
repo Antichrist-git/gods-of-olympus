@@ -18,7 +18,7 @@
 composer install
 Copy-Item .env.example .env
 php artisan key:generate
-New-Item database/database.sqlite -ItemType File -Force | Out-Null
+if (!(Test-Path database/database.sqlite)) { New-Item database/database.sqlite -ItemType File | Out-Null }
 php artisan migrate
 php artisan db:seed
 php artisan storage:link
@@ -29,7 +29,7 @@ php artisan serve
 
 Откройте http://127.0.0.1:8000/gods
 
-После установки зависимостей также можно запускать проект файлом `START_WT3.bat`. Для отслеживания изменений в Sass/JS: `npm run watch`.
+Для отслеживания изменений в Sass/JS: `npm run watch`.
 
 ## Структура
 

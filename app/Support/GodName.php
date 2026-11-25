@@ -4,6 +4,8 @@ namespace App\Support;
 
 final class GodName
 {
+    public const PATTERN = '/\A(?:[А-Яа-яЁё]+(?:[ -][А-Яа-яЁё]+)*|[A-Za-z]+(?:[ -][A-Za-z]+)*)\z/u';
+
     // Пробелы любого вида считаются одним пробелом, в том числе неразрывные.
     public static function normalize(string $name): string
     {

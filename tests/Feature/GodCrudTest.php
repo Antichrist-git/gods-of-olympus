@@ -43,6 +43,25 @@ class GodCrudTest extends TestCase
             ->assertOk()->assertSee($god->fact);
     }
 
+    public function test_each_god_has_one_quick_view_and_a_link_to_its_page(): void
+    {
+        $this->seed();
+        $html = $this->get(route('gods.index'))->assertOk()->getContent();
+        $document = new \DOMDocument();
+        $document->loadHTML($html, LIBXML_NOERROR | LIBXML_NOWARNING);
+        $xpath = new \DOMXPath($document);
+        $cards = $xpath->query('//article[contains(@class, "god-card")]');
+        $this->assertCount(5, $cards);
+
+        foreach ($cards as $card) {
+            $quickViews = $xpath->query('.//a[contains(@class, "js-god-detail")]', $card);
+            $this->assertCount(1, $quickViews);
+            $title = $xpath->query('.//h3/a', $card)->item(0);
+            $this->assertSame($quickViews->item(0)->getAttribute('href'), $title->getAttribute('href'));
+            $this->assertStringNotContainsString('js-god-detail', $title->getAttribute('class'));
+        }
+    }
+
     public function test_valid_create_saves_resized_image_and_publication_date(): void
     {
         if (!extension_loaded('gd')) $this->markTestSkipped('GD required');

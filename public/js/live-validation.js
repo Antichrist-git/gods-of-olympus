@@ -1,10 +1,6 @@
-// Пошаговая валидация God Form. Не требует npm: работает с готовым public/js/index.js.
-// Серверные правила GodController::validated() всегда остаются окончательными.
 (function () {
-    if (window.__wt3LiveValidationInitialized) return;
     const form = document.querySelector('form.god-form');
     if (!form) return;
-    window.__wt3LiveValidationInitialized = true;
 
     const fields = Array.from(form.querySelectorAll('input[name], textarea[name], select[name]'))
         .filter(field => ['name', 'type', 'published_at', 'short_description', 'description', 'fact', 'image'].includes(field.name));
@@ -42,6 +38,7 @@
         nameStatus.hidden = !message;
         nameStatus.dataset.state = kind || '';
     }
+    // Проверяет ограничение поля до отправки формы.
     function localError(field) {
         const value = field.value.trim();
         const length = textLength(value);
@@ -157,6 +154,7 @@
         return false;
     }
 
+    // Проверяет имя на сервере и учитывает смену значения во время запроса.
     async function checkNameUnique() {
         clearTimeout(nameTimer);
         const value = nameField.value.trim();
@@ -193,6 +191,7 @@
         }
     }
 
+    // Откладывает запрос, пока пользователь вводит имя.
     function scheduleNameCheck() {
         clearTimeout(nameTimer);
         nameController?.abort();
@@ -256,7 +255,6 @@
     // на один лишь HTML5 (сервер перепроверит всё независимо от JavaScript).
     form.addEventListener('submit', async event => {
         event.preventDefault();
-        event.stopImmediatePropagation(); // Старая собранная версия JS не должна дублировать проверку.
         if (submitting) return;
         nameController?.abort();
         clearTimeout(nameTimer);

@@ -51,6 +51,7 @@ class DatabaseSeeder extends Seeder {
         ];
 
         foreach ($gods as $god) {
+            $god['published_at'] = today()->toDateString();
             God::withTrashed()->firstOrCreate(
                 ['name' => $god['name']],
                 $god

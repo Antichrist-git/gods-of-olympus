@@ -30,16 +30,13 @@ class GodController extends Controller
 
         $name = GodName::normalize($raw);
         if (mb_strlen($name, 'UTF-8') < 2 || mb_strlen($name, 'UTF-8') > 60 ||
-            !preg_match('/\A(?:[А-Яа-яЁё]+(?:[ -][А-Яа-яЁё]+)*|[A-Za-z]+(?:[ -][A-Za-z]+)*)\z/u', $name)) {
+            !preg_match(GodName::PATTERN, $name)) {
             return response()->json(['available' => false, 'message' => 'Введите 2–60 букв без цифр и специальных символов.']);
         }
 
-        $query = God::query()->where('name_key', GodName::key($name));
         $excludeId = $request->query('exclude_id');
-        if (is_string($excludeId) && ctype_digit($excludeId) && (int) $excludeId > 0) {
-            $query->whereKeyNot((int) $excludeId);
-        }
-        $occupied = $query->exists();
+        $currentId = is_string($excludeId) && ctype_digit($excludeId) ? (int) $excludeId : null;
+        $occupied = God::nameIsTaken($name, $currentId);
 
         return response()->json([
             'available' => !$occupied,
@@ -70,6 +67,7 @@ class GodController extends Controller
         return redirect()->route('gods.index')->with('success', 'Бог добавлен.');
     }
 
+    // Возвращает страницу для обычного запроса и фрагмент для быстрого просмотра.
     public function show(Request $request, God $god)
     {
         if ($request->ajax()) {
@@ -83,6 +81,7 @@ class GodController extends Controller
         return view('gods.form', ['god' => $god, 'types' => GodType::OPTIONS]);
     }
 
+    // Заменяет старое изображение после успешного сохранения карточки.
     public function update(Request $request, God $god)
     {
         $data = $this->validated($request, false, $god);
@@ -135,13 +134,10 @@ class GodController extends Controller
         $data = $request->validate([
             'name' => [
                 'bail', 'required', 'string', 'min:2', 'max:60',
-                'regex:/\A(?:[А-Яа-яЁё]+(?:[ -][А-Яа-яЁё]+)*|[A-Za-z]+(?:[ -][A-Za-z]+)*)\z/u',
+                'regex:' . GodName::PATTERN,
                 function (string $attribute, mixed $value, \Closure $fail) use ($god): void {
                     if (!is_string($value)) return;
-                    $key = GodName::key($value);
-                    $query = God::query()->where('name_key', $key);
-                    if ($god) $query->whereKeyNot($god->id);
-                    if ($query->exists()) {
+                    if (God::nameIsTaken($value, $god?->id)) {
                         $fail('Бог с таким именем уже существует в пантеоне.');
                     }
                 },
@@ -159,6 +155,7 @@ class GodController extends Controller
         return $data;
     }
 
+    // Преобразует конфликт уникальности в ошибку поля при одновременной записи.
     private function rethrowNameConflict(QueryException $e): never
     {
         $message = mb_strtolower($e->getMessage(), 'UTF-8');

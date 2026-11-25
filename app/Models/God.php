@@ -16,6 +16,16 @@ class God extends Model
         'name', 'type', 'short_description', 'description', 'fact', 'image_path', 'published_at',
     ];
 
+    // При редактировании исключаем саму карточку из поиска совпадений.
+    public static function nameIsTaken(string $name, ?int $currentId = null): bool
+    {
+        $query = static::query()->where('name_key', GodName::key($name));
+        if ($currentId !== null) {
+            $query->whereKeyNot($currentId);
+        }
+        return $query->exists();
+    }
+
     protected function casts(): array
     {
         return ['published_at' => 'date'];
