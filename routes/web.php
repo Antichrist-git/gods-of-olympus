@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CollectionController;
 use App\Http\Controllers\GodController;
 use Illuminate\Support\Facades\Route;
 
@@ -8,4 +9,12 @@ Route::redirect('/', '/gods');
 Route::get('gods/check-name', [GodController::class, 'checkName'])
     ->name('gods.check-name')
     ->middleware('throttle:60,1');
-Route::resource('gods', GodController::class);
+Route::resource('gods', GodController::class)
+    ->middlewareFor(['create', 'store', 'edit', 'update', 'destroy'], 'auth');
+
+Route::middleware('auth')->group(function () {
+    Route::get('users', [CollectionController::class, 'index'])->name('collections.index');
+    Route::get('users/{user}/gods', [CollectionController::class, 'show'])->name('collections.show');
+});
+
+require __DIR__.'/auth.php';

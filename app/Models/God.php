@@ -12,6 +12,11 @@ class God extends Model
 {
     use SoftDeletes;
 
+    public function user(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
+
     protected $fillable = [
         'name', 'type', 'short_description', 'description', 'fact', 'image_path', 'published_at',
     ];

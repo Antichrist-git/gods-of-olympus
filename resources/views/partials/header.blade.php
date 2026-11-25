@@ -8,8 +8,21 @@
             <a href="{{ route('gods.index') }}"
                 class="nav-catalog {{ request()->routeIs('gods.index') ? 'active' : '' }}"
                 @if (request()->routeIs('gods.index')) aria-current="page" @endif>Пантеон</a>
+            @auth
             <a class="btn btn-primary btn-sm" href="{{ route('gods.create') }}"><span aria-hidden="true">+</span>
                 Добавить бога</a>
+            @endauth
+            @guest
+                <a href="{{ route('login') }}">Войти</a>
+                <a href="{{ route('register') }}">Регистрация</a>
+            @else
+                <a href="{{ route('collections.index') }}">Коллекции</a>
+                <a href="{{ route('collections.show', auth()->user()) }}">{{ auth()->user()->name }}</a>
+                <form method="POST" action="{{ route('logout') }}">
+                    @csrf
+                    <button class="btn btn-outline-primary btn-sm" type="submit">Выйти</button>
+                </form>
+            @endguest
         </div>
     </nav>
 </header>

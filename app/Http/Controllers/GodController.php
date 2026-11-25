@@ -55,7 +55,7 @@ class GodController extends Controller
         $data['image_path'] = GodImage::save($request->file('image'));
 
         try {
-            God::create($data);
+            $request->user()->gods()->create($data);
         } catch (QueryException $e) {
             Storage::disk('public')->delete($data['image_path']);
             $this->rethrowNameConflict($e);
