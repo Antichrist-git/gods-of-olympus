@@ -15,6 +15,9 @@
     @forelse ($comments as $comment)
         <article id="comment-{{ $comment->id }}" class="border-top py-3">
             <strong>{{ $comment->user->name }}</strong>
+            @if ($friendIds->has($comment->user_id))
+                <span class="badge text-bg-primary ms-1">Друг</span>
+            @endif
             <time class="small text-secondary ms-2" datetime="{{ $comment->created_at->toAtomString() }}">{{ $comment->created_at->format('d.m.Y H:i') }}</time>
             <p class="preserve-lines mt-2 mb-0">{{ $comment->body }}</p>
         </article>

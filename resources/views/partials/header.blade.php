@@ -16,6 +16,7 @@
                 <a href="{{ route('login') }}">Войти</a>
                 <a href="{{ route('register') }}">Регистрация</a>
             @else
+                <a href="{{ route('feed.index') }}">Лента</a>
                 <a href="{{ route('collections.index') }}">Коллекции</a>
                 <a href="{{ route('collections.show', auth()->user()) }}">{{ auth()->user()->name }}</a>
                 @can('manage-archive')

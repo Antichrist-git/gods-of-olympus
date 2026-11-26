@@ -1,46 +1,40 @@
-# Лабораторная работа №3 — Gods of Olympus
+# Олимп — лабораторные работы WT4 и WT5
 
-Небольшой каталог богов Древней Греции на Laravel 12. Данные хранятся в SQLite, интерфейс выполнен на Bootstrap 5, ресурсы собираются Laravel Mix.
+Каталог богов Древней Греции на Laravel 12, SQLite и Bootstrap. Ветка `wt4-auth` содержит WT4, а `wt5-relations` добавляет комментарии, взаимную дружбу и ленту.
 
-## Возможности
+## Первый запуск WT5 на другом компьютере
 
-- Просмотр списка богов и информации о каждом в модальном окне.
-- Добавление, изменение и мягкое удаление записей.
-- Проверка формы при вводе и на стороне Laravel, включая уникальность имён.
-- Выпадающий список сфер покровительства и дата публикации.
-- Загрузка фотографий в `storage/app/public/gods/` с изменением размера через GD.
+Понадобятся Git, Composer и PHP 8.3+ с расширениями проекта, в том числе pdo_sqlite, mbstring, fileinfo и gd. Готовые CSS, JavaScript и исходные фотографии входят в репозиторий.
 
-## Первый запуск после клонирования
-
-Требуются PHP 8.3+, Composer, Node.js и PHP-расширения `pdo_sqlite`, `sqlite3`, `gd`, `mbstring`, `fileinfo`.
+Откройте PowerShell в папке для проектов. Скачайте ветку:
 
 ```powershell
-composer install
+git clone --branch wt5-relations https://github.com/Antichrist-git/gods-of-olympus.git WT5
+cd WT5
+```
+
+В новой копии выполните по очереди:
+
+```powershell
 Copy-Item .env.example .env
+composer install
 php artisan key:generate
 if (!(Test-Path database/database.sqlite)) { New-Item database/database.sqlite -ItemType File | Out-Null }
 php artisan migrate
-php artisan db:seed
+php artisan olympus:demo
 php artisan storage:link
-npm ci
-npm run dev
-php artisan serve
+php artisan serve --host=127.0.0.1 --port=8001
 ```
 
-Откройте http://127.0.0.1:8000/gods
+Команда `olympus:demo` сама создаёт пять богов, трёх пользователей, дружбу и комментарии в пустой базе. Сохраните пароль из её вывода. Если в базе уже есть пользователи или карточки, команда сохраняет их и пропускает демонаполнение. Если Windows не разрешила создать ссылку для фото, в папке WT5 выполните `New-Item -ItemType Junction -Path public/storage -Target (Resolve-Path storage/app/public).Path`, когда public/storage отсутствует.
 
-Для отслеживания изменений в Sass/JS: `npm run watch`.
+Откройте http://127.0.0.1:8001/gods. При следующих запусках достаточно команды serve из последней строки. Для изменения SCSS или JS выполните `npm ci`, затем `npm run watch`.
 
-## Структура
+## Что показать
 
-- `routes/web.php` — маршруты приложения;
-- `app/Http/Controllers/GodController.php` — обработка запросов и проверка данных;
-- `app/Models/God.php` — Eloquent-модель;
-- `app/Support/` — обработка имён, категорий и фотографий;
-- `database/migrations/` — структура таблиц;
-- `database/seeders/DatabaseSeeder.php` — пять исходных богов;
-- `resources/views/` — Blade-шаблоны;
-- `resources/js/`, `resources/sass/` — исходные JS и Sass;
-- `webpack.mix.js` — сборка JS и CSS в `public`.
+1. Войдите как `anna@example.test` с паролем из консоли. Откройте «Лента». Там две карточки Максима, сначала более новая.
+2. Нажмите название верхней карточки. Рядом с комментарием Максима есть отметка «Друг», рядом с комментарием Ольги её нет. Добавьте собственный комментарий.
+3. Через «Коллекции» откройте профиль Максима и удалите его из друзей. Обновите ленту и страницу комментариев. Добавьте Максима обратно и войдите как `maxim@example.test`: в профиле Анны тоже доступно удаление из друзей.
+4. Максим — администратор. В его меню есть «Удалённые». Для проверки WT4 используйте пробную карточку: удалите, восстановите и проверьте владельца. Ольга (`olga@example.test`) — обычный пользователь.
 
-Папка `vendor`, локальная `.env` и файл `database/database.sqlite` намеренно не добавляются в репозиторий. Данные для первоначального заполнения создаются сидером.
+Домашняя SQLite-база, локальная .env и пароли не нужны для запуска демонстрации. Роли, владельцы, карточки и дружба демо создаются на новом компьютере.

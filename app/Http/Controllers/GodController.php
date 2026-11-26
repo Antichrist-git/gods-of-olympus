@@ -74,7 +74,11 @@ class GodController extends Controller
             return view('gods.partials.details', compact('god'));
         }
         $comments = $god->comments()->with('user')->latest('id')->simplePaginate(20)->fragment('comments');
-        return view('gods.show', compact('god', 'comments'));
+        // Проверяем дружбу одним запросом для авторов текущей страницы.
+        $friendIds = $request->user()?->friends()
+            ->whereIn('users.id', $comments->getCollection()->pluck('user_id'))
+            ->pluck('users.id')->flip() ?? collect();
+        return view('gods.show', compact('god', 'comments', 'friendIds'));
     }
 
     public function edit(God $god)
