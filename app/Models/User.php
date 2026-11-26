@@ -9,6 +9,11 @@ use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable
 {
+    public function comments(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(Comment::class);
+    }
+
     public function gods(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(God::class);

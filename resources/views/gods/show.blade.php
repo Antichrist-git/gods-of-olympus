@@ -12,6 +12,7 @@
             @endcan
         </div>
         <article class="detail-panel">@include('gods.partials.details')</article>
+        @include('gods.partials.comments')
     </main>
     @can('manage-god', $god)
     <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteTitle" aria-hidden="true">

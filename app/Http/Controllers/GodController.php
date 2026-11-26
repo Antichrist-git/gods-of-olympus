@@ -73,7 +73,8 @@ class GodController extends Controller
         if ($request->ajax()) {
             return view('gods.partials.details', compact('god'));
         }
-        return view('gods.show', compact('god'));
+        $comments = $god->comments()->with('user')->latest('id')->simplePaginate(20)->fragment('comments');
+        return view('gods.show', compact('god', 'comments'));
     }
 
     public function edit(God $god)

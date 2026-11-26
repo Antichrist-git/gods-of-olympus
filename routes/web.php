@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ArchivedGodController;
 use App\Http\Controllers\CollectionController;
+use App\Http\Controllers\CommentController;
 use App\Http\Controllers\GodController;
 use Illuminate\Support\Facades\Route;
 
@@ -15,6 +16,7 @@ Route::resource('gods', GodController::class)
     ->middlewareFor(['edit', 'update', 'destroy'], 'can:manage-god,god');
 
 Route::middleware('auth')->group(function () {
+    Route::post('gods/{god}/comments', [CommentController::class, 'store'])->name('gods.comments.store');
     Route::get('users', [CollectionController::class, 'index'])->name('collections.index');
     Route::middleware('can:manage-archive')->prefix('archive')->name('archive.')->group(function () {
         Route::get('/', [ArchivedGodController::class, 'index'])->name('index');
