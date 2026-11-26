@@ -2,7 +2,10 @@
 
 namespace App\Providers;
 
+use App\Events\FriendAdded;
 use App\Models\God;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Event;
 use App\Models\User;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
@@ -22,6 +25,13 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // Обратная связь создаётся синхронно в той же транзакции.
+        Event::listen(FriendAdded::class, function (FriendAdded $event) {
+            DB::table('friendships')->insertOrIgnore([
+                'user_id' => $event->friendId, 'friend_id' => $event->userId,
+            ]);
+        });
+
         Gate::define('manage-archive', fn (User $user) => $user->is_admin);
 
         // Администратор может управлять карточками всех владельцев.

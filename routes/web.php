@@ -3,6 +3,7 @@
 use App\Http\Controllers\ArchivedGodController;
 use App\Http\Controllers\CollectionController;
 use App\Http\Controllers\CommentController;
+use App\Http\Controllers\FriendshipController;
 use App\Http\Controllers\GodController;
 use Illuminate\Support\Facades\Route;
 
@@ -17,6 +18,8 @@ Route::resource('gods', GodController::class)
 
 Route::middleware('auth')->group(function () {
     Route::post('gods/{god}/comments', [CommentController::class, 'store'])->name('gods.comments.store');
+    Route::post('users/{user:username}/friendship', [FriendshipController::class, 'store'])->name('friends.store');
+    Route::delete('users/{user:username}/friendship', [FriendshipController::class, 'destroy'])->name('friends.destroy');
     Route::get('users', [CollectionController::class, 'index'])->name('collections.index');
     Route::middleware('can:manage-archive')->prefix('archive')->name('archive.')->group(function () {
         Route::get('/', [ArchivedGodController::class, 'index'])->name('index');

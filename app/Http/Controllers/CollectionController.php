@@ -27,6 +27,7 @@ class CollectionController extends Controller
         }
         return view('collections.show', [
             'owner' => $user,
+            'isFriend' => auth()->user()->friends()->whereKey($user->id)->exists(),
             'gods' => $gods->get(),
         ]);
     }
