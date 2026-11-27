@@ -14,7 +14,8 @@ class ArchivedGodController extends Controller
     public function index(): View
     {
         return view('gods.archive', [
-            'gods' => God::onlyTrashed()->with('user')->orderByDesc('deleted_at')->orderByDesc('id')->get(),
+            'gods' => God::onlyTrashed()->with('user')->when(request()->filled('q'), fn ($query) => $query->where('name_key', 'like', '%'.\App\Support\GodName::key(request()->string('q')->toString()).'%'))
+                ->orderByDesc('deleted_at')->orderByDesc('id')->paginate(12)->withQueryString(),
         ]);
     }
 

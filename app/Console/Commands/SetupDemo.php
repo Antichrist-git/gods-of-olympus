@@ -29,6 +29,7 @@ class SetupDemo extends Command
                 $user = new User(['name' => $name, 'username' => $username,
                     'email' => $username.'@example.test', 'password' => $password]);
                 $user->is_admin = $username === 'maxim';
+                $user->created_at = now()->subDays(65 + count($users))->startOfDay()->addHours(10 + count($users));
                 $user->save();
                 $users[] = $user;
             }
@@ -37,9 +38,10 @@ class SetupDemo extends Command
             app(DatabaseSeeder::class)->run();
             $gods = God::orderBy('id')->get();
             foreach ($gods as $index => $god) {
+                $time = now()->subDays(40 - $index * 2)->startOfDay()->addHours(9 + $index)->addMinutes(7 + 11 * $index);
                 DB::table('gods')->where('id', $god->id)->update([
                     'user_id' => $users[$index % count($users)]->id,
-                    'created_at' => now()->subDays(count($gods) - $index),
+                    'created_at' => $time, 'updated_at' => $time, 'published_at' => $time->toDateString(),
                 ]);
             }
 
@@ -51,6 +53,7 @@ class SetupDemo extends Command
                 $comment = new Comment();
                 $comment->body = $body;
                 $comment->user()->associate($author);
+                $comment->created_at = $comment->updated_at = $card->created_at->copy()->addMinutes($author->is($maxim) ? 27 : 143);
                 $card->comments()->save($comment);
             }
             return true;

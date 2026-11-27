@@ -19,6 +19,7 @@ Route::resource('gods', GodController::class)
     ->middlewareFor(['edit', 'update', 'destroy'], 'can:manage-god,god');
 
 Route::middleware('auth')->group(function () {
+    Route::view('profile/access', 'collections.access')->name('profile.access');
     Route::post('profile/api-token', ApiTokenController::class)->middleware('throttle:5,1')->name('profile.api-token');
     Route::delete('gods/{god}/comments/{comment}', [CommentController::class, 'destroy'])
         ->scopeBindings()->middleware('can:delete-comment')->name('gods.comments.destroy');

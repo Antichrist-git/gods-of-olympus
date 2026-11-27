@@ -18,6 +18,7 @@
               data-check-name-url="{{ route('gods.check-name') }}"
               data-editing-id="{{ $editing ? $god->id : '' }}">
             @csrf
+            <input type="hidden" name="from" value="{{ old('from', request('from')) }}">
             @if ($editing) @method('PUT') @endif
 
             @if ($errors->any())
@@ -129,7 +130,7 @@
             <div class="form-actions">
                 <span>Поля проверяются после выхода из них и при каждом изменении. Сервер также проверяет данные.</span>
                 <div class="d-flex gap-2">
-                    <a href="{{ route('gods.index') }}" class="btn btn-outline-primary">Отмена</a>
+                    <a href="{{ $backUrl }}" class="btn btn-outline-primary">Отмена</a>
                     <button type="submit" class="btn btn-primary">{{ $editing ? 'Сохранить изменения' : 'Добавить в пантеон' }}</button>
                 </div>
             </div>

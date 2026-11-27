@@ -11,7 +11,7 @@ class CollectionController extends Controller
 {
     public function index(): View
     {
-        return view('collections.index', ['users' => User::orderBy('name')->orderBy('id')->get()]);
+        return view('collections.index', ['users' => User::withCount('gods')->orderBy('name')->orderBy('id')->get()]);
     }
 
     public function legacy(int $id): RedirectResponse
@@ -21,7 +21,7 @@ class CollectionController extends Controller
 
     public function show(User $user): View
     {
-        $gods = $user->gods()->orderBy('id');
+        $gods = $user->gods()->with('user')->orderBy('id');
         if (Gate::allows('manage-archive')) {
             $gods->withTrashed();
         }

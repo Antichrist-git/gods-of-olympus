@@ -12,7 +12,7 @@ class GodController extends Controller
 {
     public function index()
     {
-        $gods = God::orderBy('id')->get();
+        $gods = God::with('user')->orderBy('id')->get();
         return view('gods.index', compact('gods'));
     }
 
@@ -40,16 +40,16 @@ class GodController extends Controller
         ]);
     }
 
-    public function create()
+    public function create(Request $request)
     {
-        return view('gods.form', ['types' => GodType::OPTIONS]);
+        return view('gods.form', ['types' => GodType::OPTIONS, 'backUrl' => $this->destination($request, route('gods.index'))]);
     }
 
     public function store(Request $request, GodWriter $writer)
     {
-        $writer->create($request);
+        $god = $writer->create($request);
 
-        return redirect()->route('gods.index')->with('success', 'Бог добавлен.');
+        return redirect()->to($this->destination(request(), route('gods.show', $god)))->with('success', 'Бог добавлен.');
     }
 
     // Возвращает страницу для обычного запроса и фрагмент для быстрого просмотра.
@@ -63,12 +63,12 @@ class GodController extends Controller
         $friendIds = $request->user()?->friends()
             ->whereIn('users.id', $comments->getCollection()->pluck('user_id'))
             ->pluck('users.id')->flip() ?? collect();
-        return view('gods.show', compact('god', 'comments', 'friendIds'));
+        return view('gods.show', compact('god', 'comments', 'friendIds') + ['backUrl' => $this->destination($request, route('gods.index'))]);
     }
 
-    public function edit(God $god)
+    public function edit(Request $request, God $god)
     {
-        return view('gods.form', ['god' => $god, 'types' => GodType::OPTIONS]);
+        return view('gods.form', ['god' => $god, 'types' => GodType::OPTIONS, 'backUrl' => $this->destination($request, route('gods.show', $god))]);
     }
 
     // Заменяет старое изображение после успешного сохранения карточки.
@@ -76,13 +76,24 @@ class GodController extends Controller
     {
         $writer->update($request, $god);
 
-        return redirect()->route('gods.index')->with('success', 'Изменения сохранены.');
+        return redirect()->to($this->destination(request(), route('gods.show', $god)))->with('success', 'Изменения сохранены.');
     }
 
     public function destroy(God $god)
     {
         $god->delete(); // Soft Deletes: проставляем deleted_at, не удаляя запись/фото.
-        return redirect()->route('gods.index')->with('success', 'Бог удалён.');
+        return redirect()->to($this->destination(request(), route('collections.show', request()->user())))->with('success', 'Бог удалён.');
     }
 
+    private function destination(Request $request, string $fallback): string
+    {
+        $path = $request->input('from');
+        if (is_string($path) && !str_contains($path, chr(92)) && !preg_match('/[[:cntrl:]]/', $path)) {
+            $base = explode('?', $path, 2)[0];
+            if (preg_match('~^/(?:gods(?:/[0-9]+)?|feed|archive|users(?:/[\\pL\\pN_-]+/gods)?)$~uD', $base)) {
+                return $path;
+            }
+        }
+        return $fallback;
+    }
 }

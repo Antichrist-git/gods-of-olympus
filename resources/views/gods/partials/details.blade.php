@@ -16,7 +16,7 @@
         <aside class="fact-block"><span class="eyebrow">ЗНАЕТЕ ЛИ ВЫ?</span>
             <p class="mb-0 preserve-lines">{{ $god->fact }}</p>
         </aside>
-        <p class="detail-date">Опубликовано: {{ $god->published_at?->format('d.m.Y') ?? 'не указано' }} · Обновлено:
+        <p class="detail-date">@if ($god->user) {{ $god->user->name }} · @endif Опубликовано: {{ $god->published_at?->format('d.m.Y') ?? 'не указано' }} · Обновлено:
             {{ $god->updated_at?->format('d.m.Y') }}</p>
     </div>
 </div>

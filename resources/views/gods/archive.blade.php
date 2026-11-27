@@ -1,19 +1,23 @@
 @extends('layouts.app')
-@section('title', 'Удалённые карточки')
+@section('title', 'Корзина')
 @section('content')
     <main id="main" class="container py-5">
-        <h1>Удалённые карточки</h1>
+        <h1>Корзина</h1>
         @error('restore') <p class="alert alert-warning" role="alert">{{ $message }}</p> @enderror
-        <ul class="list-group">
+        <form class="my-3" method="GET"><label for="archive-q">Поиск по имени</label>
+<input class="form-control" name="q" id="archive-q" value="{{ request('q') }}"><button class="btn btn-outline-primary mt-2">Найти</button></form>
+<div class="row g-4 my-2">
             @forelse ($gods as $god)
-                <li class="list-group-item">
-                    <strong>{{ $god->name }}</strong> · {{ $god->user?->name ?? 'Без владельца' }}
-                    <span>· Удалено {{ $god->deleted_at->format('d.m.Y') }}</span>
-                    @include('gods.partials.archive-actions')
-                </li>
+                <div class="god-column col-12 col-md-6 col-lg-4">
+                    @if ($god->trashed())
+                        @include('gods.partials.archived-card')
+                    @else
+                        @include('gods.partials.card')
+                    @endif
+                </div>
             @empty
-                <li class="list-group-item">Удалённых карточек пока нет.</li>
+                <p>Карточки не найдены.</p>
             @endforelse
-        </ul>
+        </div>{{ $gods->links('pagination::bootstrap-5') }}
     </main>
 @endsection

@@ -5,10 +5,7 @@
         <a href="{{ route('collections.index') }}">Все коллекции</a>
         <h1 class="my-3">Коллекция — {{ $owner->name }}</h1>
         @if (auth()->user()->is($owner))
-            <form method="POST" action="{{ route('profile.api-token') }}" class="mb-3">
-                @csrf
-                <button class="btn btn-primary">Создать API-токен</button>
-            </form>
+            <a class="back-link" href="{{ route('profile.access') }}">Доступ к API</a>
         @endif
         @unless (auth()->user()->is($owner))
             <form class="mb-3" method="POST" action="{{ route($isFriend ? 'friends.destroy' : 'friends.store', $owner) }}">
@@ -22,19 +19,19 @@
             </form>
         @endunless
         @error('restore') <p class="alert alert-warning" role="alert">{{ $message }}</p> @enderror
-        <ul class="list-group">
+        <div class="row g-4 my-2">
             @forelse ($gods as $god)
-                <li class="list-group-item">
+                <div class="god-column col-12 col-md-6 col-lg-4">
                     @if ($god->trashed())
-                        {{ $god->name }} · Удалено {{ $god->deleted_at->format('d.m.Y') }}
-                        @include('gods.partials.archive-actions')
+                        @include('gods.partials.archived-card')
                     @else
-                        <a href="{{ route('gods.show', $god) }}">{{ $god->name }}</a>
+                        @include('gods.partials.card')
                     @endif
-                </li>
+                </div>
             @empty
-                <li class="list-group-item">В коллекции пока нет богов.</li>
+                <p>В коллекции пока нет карточек.</p>
             @endforelse
-        </ul>
+        </div>
     </main>
+@include('gods.partials.modal')
 @endsection

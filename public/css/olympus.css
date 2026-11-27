@@ -1,0 +1,42 @@
+/* Shared catalogue, collection and discussion layouts. */
+.nav-links { flex-wrap:wrap; align-items:center; gap:.5rem }
+.nav-links>a,.profile-menu summary { padding:.55rem .8rem; border-radius:.45rem }
+.nav-links [aria-current=page] { color:#153e3b; background:#e8ede5; box-shadow:inset 0 -2px #536c54 }
+.profile-menu { position:relative; z-index:8 }
+.profile-menu summary { cursor:pointer }
+.profile-menu>div { position:absolute; right:0; min-width:11rem; padding:.4rem; border:1px solid #dcd8ca; background:#fffdf7; border-radius:.6rem; box-shadow:0 8px 22px #22332520 }
+.profile-menu>div a,.profile-menu button { display:block; width:100%; padding:.5rem; text-align:left; border:0; background:none; color:#153e3b }
+.rotating-art { position:relative; overflow:hidden; isolation:isolate }
+.hero-slide { position:absolute; inset:0; margin:0; opacity:0; transition:opacity .8s ease }
+.hero-slide.current { opacity:1 }
+.hero-slide img { height:100%; width:100%; object-fit:cover }
+.hero-slide figcaption { position:absolute; bottom:0; inset-inline:0; padding:3rem 4rem 1.4rem 2rem; color:white; background:linear-gradient(transparent,#14251fdb); font:1.5rem Georgia,serif }
+.slide-pause { position:absolute; z-index:3; bottom:1rem; right:1rem; border:1px solid #fff9; background:#17372fc9; color:white; border-radius:50%; width:2.25rem; height:2.25rem }
+.search-box { position:relative }
+.search-box>i { position:absolute; top:50%; left:1rem; transform:translateY(-50%); pointer-events:none }
+.god-card .card-number { width:auto; max-width:88%; height:auto; padding:.35rem .6rem; background:#fffcf2ed; color:#284238; border-radius:.35rem }
+.god-card .card-body { position:relative; isolation:isolate }
+.god-card .card-body::before { content:""; position:absolute; inset:0; z-index:-1; background:linear-gradient(135deg,#fffdf6,#f3e8c8); opacity:0; transition:opacity .3s }
+.god-card:is(:hover,:focus-within) .card-body::before { opacity:1 }
+#godModal .modal-dialog { max-width:min(700px,96vw); margin-inline:auto }
+#godModal .detail-image-wrap { display:flex; justify-content:center; background:transparent }
+#godModal .detail-image { width:auto; height:auto; max-width:100%; max-height:min(52vh, 480px); object-fit:contain; border-radius:10px }
+.card-art .god-image,.feed-photo img,.trash-picture { object-position:center top }
+.god-card:hover .god-image { transform:none }
+.container.feed-page { max-width:calc(54rem + var(--bs-gutter-x, 1.5rem)); margin-inline:auto }
+.people-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:1rem; margin-top:1.5rem }
+.person-tile,.feed-story,.comment-row { border:1px solid #dddccf; border-radius:.8rem; background:#fffdf7 }
+.person-tile { aspect-ratio:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:.5rem; text-decoration:none; color:#153e3b }
+.avatar { display:inline-grid; place-items:center; width:3.2rem; height:3.2rem; border-radius:50%; background:#e7ebdf; color:#426054 }
+.feed-story { max-width:54rem; display:grid; grid-template-columns:minmax(120px,30%) 1fr; gap:1.25rem; padding:1rem; margin-block:1rem }
+.feed-photo img,.trash-picture { width:100%; aspect-ratio:3/2; object-fit:cover; border-radius:.5rem }
+#comments { max-width:800px; margin-inline:auto }
+.comment-row { position:relative; margin-block:.75rem; padding:1rem 3rem 1rem 4rem }
+.comment-row .avatar { position:absolute; left:.8rem; top:.9rem; width:2.5rem; height:2.5rem }
+.trash-action { position:absolute; right:.5rem; top:.5rem; border:0; background:transparent; color:#6b615b; padding:.65rem }
+.trash-action:is(:hover,:focus-visible) { color:#ad302a }
+@media(max-width:680px){.nav-inner{flex-wrap:wrap}.nav-links{justify-content:flex-start}.feed-story{grid-template-columns:1fr}.profile-menu>div{right:auto;left:0}}
+@media(prefers-reduced-motion:reduce){.hero-slide,.god-card .card-body::before{transition:none}}
+
+.card-art::after { content:attr(title); position:absolute; bottom:.75rem; left:.75rem; background:#17372fed; color:white; border-radius:.3rem; padding:.2rem .6rem; font-size:.85rem; opacity:0; pointer-events:none; transition:opacity .18s }
+.card-art:is(:hover,:focus-visible)::after { opacity:1 }

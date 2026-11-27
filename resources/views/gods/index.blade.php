@@ -10,23 +10,27 @@
                     древнегреческий пантеон.</p>
                 <a class="hero-link" href="#collection">Исследовать пантеон <span aria-hidden="true">↗</span></a>
             </div>
-            <div class="hero-art" role="img" aria-label="Горный пейзаж Олимпа"
-                style="background-image: url('{{ asset('storage/gods/olympus.jpg') }}')">
-                <span class="hero-art-top">ΕΛΛΗΝΙΚΗ ΜΥΘΟΛΟΓΙΑ</span>
-                <div class="hero-caption"><span>01 / ИСТОКИ ЛЕГЕНД</span><strong>Там, где рождаются мифы</strong></div>
+            <div class="hero-art rotating-art" aria-label="Иллюстрации пантеона">
+                @foreach (['olympus.jpg' => 'Гора Олимп', 'Athena.jpg' => 'Афина', 'Poseidon.jpg' => 'Посейдон'] as $image => $caption)
+                    <figure class="hero-slide {{ $loop->first ? 'current' : '' }}">
+                        <img src="{{ asset('storage/gods/'.$image) }}" alt="">
+                        <figcaption>{{ $caption }}</figcaption>
+                    </figure>
+                @endforeach
+                <button type="button" class="slide-pause" aria-label="Приостановить смену изображений">Ⅱ</button>
             </div>
         </section>
         <section id="collection" class="collection" aria-labelledby="collection-title">
             <div class="section-heading">
                 <div>
                     <p class="eyebrow">КОЛЛЕКЦИЯ</p>
-                    <h2 id="collection-title">Древнегреческий пантеон <span class="count-badge">{{ $gods->count() }}</span>
+                    <h2 id="collection-title">Древнегреческий пантеон
                     </h2>
-                </div><span class="section-note">У каждого бога — своя история</span>
+                </div>
             </div>
             @if ($gods->isNotEmpty())
                 <div class="collection-toolbar">
-                    <label class="search-box"><span aria-hidden="true">⌕</span><input type="search" id="godSearch"
+                    <label class="search-box"><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i><input type="search" id="godSearch"
                             class="form-control" placeholder="Найти бога или сферу покровительства…"
                             aria-label="Поиск по имени и сфере покровительства"></label>
                     <div class="filter-box"><label for="godType" class="visually-hidden">Сфера
@@ -43,35 +47,7 @@
                 @forelse ($gods as $god)
                     <div class="god-column col-12 col-md-6 col-lg-4" data-search="{{ $god->name }} {{ $god->type }}"
                         data-type="{{ $god->type }}">
-                        <article class="card god-card h-100">
-                            <a class="card-art" href="{{ route('gods.show', $god) }}"
-                                aria-label="{{ $god->name }} — подробности">
-                                @if ($god->image_path)
-                                    <img src="{{ asset('storage/' . $god->image_path) }}" class="god-image"
-                                    alt="{{ $god->name }}" loading="lazy" width="1200" height="800">@else<div
-                                        class="image-placeholder" aria-hidden="true">Ω</div>
-                                @endif
-                                <span class="card-number">{{ str_pad($loop->iteration, 2, '0', STR_PAD_LEFT) }}</span><span
-                                    class="card-art-arrow" aria-hidden="true">↗</span>
-                            </a>
-                            <div class="card-body d-flex flex-column">
-                                <p class="god-type">{{ $god->type }}</p>
-                                <h3 class="card-title"><a href="{{ route('gods.show', $god) }}">{{ $god->name }}</a>
-                                </h3>
-                                <p class="card-text">{{ $god->short_description }}</p>
-                                <p class="detail-date">Опубликовано: {{ $god->published_at?->format('d.m.Y') ?? 'не указано' }}</p>
-                                <div class="card-actions mt-auto"><a class="card-more js-god-detail"
-                                        href="{{ route('gods.show', $god) }}"
-                                        @can('manage-god', $god) data-edit-url="{{ route('gods.edit', $god) }}" data-delete-url="{{ route('gods.destroy', $god) }}" @endcan>Быстрый просмотр <span
-                                            aria-hidden="true">↗</span></a>
-                                    @can('manage-god', $god)
-                                    <a class="card-edit"
-                                        href="{{ route('gods.edit', $god) }}"
-                                        aria-label="Редактировать: {{ $god->name }}" title="Редактировать">✎</a>
-                                    @endcan
-                                </div>
-                            </div>
-                        </article>
+                        @include('gods.partials.card')
                     </div>
                 @empty
                     <div class="col-12">
@@ -92,27 +68,5 @@
             </div>
         </section>
     </main>
-    <div class="modal fade" id="godModal" tabindex="-1" aria-labelledby="godModalTitle" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h2 class="modal-title fs-4" id="godModalTitle">Подробности</h2><button type="button" class="btn-close"
-                        data-bs-dismiss="modal" aria-label="Закрыть"></button>
-                </div>
-                <div class="modal-body" id="godModalBody" aria-live="polite"></div>
-                <div class="modal-footer">
-                    <div class="modal-navigation me-auto"><button class="btn btn-outline-primary" id="previousGod"
-                            type="button" aria-label="Предыдущий бог">←</button><button class="btn btn-outline-primary"
-                            id="nextGod" type="button" aria-label="Следующий бог">→</button></div>
-                    <a class="btn btn-primary" id="godModalEdit" hidden>Редактировать</a>
-                    <form id="godModalDeleteForm" hidden method="POST" class="m-0"
-                          data-confirm-delete>
-                        @csrf @method('DELETE')
-                        <button type="submit" class="btn btn-outline-danger">Удалить</button>
-                    </form>
-                    <button type="button" class="btn btn-outline-primary" data-bs-dismiss="modal">Закрыть</button>
-                </div>
-            </div>
-        </div>
-    </div>
+    @include('gods.partials.modal')
 @endsection

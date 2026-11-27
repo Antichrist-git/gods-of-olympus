@@ -4,9 +4,9 @@
     <main id="main" class="site-container main-content">
         <nav aria-label="Хлебные крошки" class="breadcrumbs"><a href="{{ route('gods.index') }}">Пантеон</a><span
                 aria-hidden="true">/</span><span aria-current="page">{{ $god->name }}</span></nav>
-        <div class="detail-toolbar"><a href="{{ route('gods.index') }}" class="back-link">← Назад к коллекции</a>
+        <div class="detail-toolbar"><a href="{{ $backUrl }}" class="back-link">← Назад</a>
             @can('manage-god', $god)
-            <div class="d-flex gap-2"><a href="{{ route('gods.edit', $god) }}"
+            <div class="d-flex gap-2"><a href="{{ route('gods.edit', [$god, 'from' => request('from') ?: request()->getPathInfo()]) }}"
                     class="btn btn-primary">Редактировать</a><button type="button" class="btn btn-outline-danger"
                     data-bs-toggle="modal" data-bs-target="#deleteModal">Удалить</button></div>
             @endcan
@@ -27,7 +27,7 @@
                 </div>
                 <div class="modal-footer"><button type="button" class="btn btn-outline-primary"
                         data-bs-dismiss="modal">Отмена</button>
-                    <form action="{{ route('gods.destroy', $god) }}" method="POST">@csrf @method('DELETE')<button
+                    <form action="{{ route('gods.destroy', [$god, 'from' => request('from')]) }}" method="POST">@csrf @method('DELETE')<button
                             type="submit" class="btn btn-danger">Удалить</button></form>
                 </div>
             </div>

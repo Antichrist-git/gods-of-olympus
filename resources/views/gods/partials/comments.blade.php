@@ -13,8 +13,8 @@
         <p><a href="{{ route('login') }}">Войдите</a>, чтобы оставить комментарий.</p>
     @endauth
     @forelse ($comments as $comment)
-        <article id="comment-{{ $comment->id }}" class="border-top py-3">
-            <strong>{{ $comment->user->name }}</strong>
+        <article id="comment-{{ $comment->id }}" class="comment-row">
+            <span class="avatar"><i class="fa-solid fa-user"></i></span><a href="{{ route('collections.show', $comment->user) }}"><strong>{{ $comment->user->name }}</strong></a>
             @if ($friendIds->has($comment->user_id))
                 <span class="badge text-bg-primary ms-1">Друг</span>
             @endif
@@ -25,7 +25,7 @@
                       onsubmit="return confirm('Удалить этот комментарий без возможности восстановления?')">
                     @csrf
                     @method('DELETE')
-                    <button type="submit" class="btn btn-sm btn-outline-danger mt-2">Удалить комментарий</button>
+                    <button type="submit" class="trash-action" aria-label="Удалить комментарий" title="Удалить комментарий"><i class="fa-solid fa-trash-can" aria-hidden="true"></i></button>
                 </form>
             @endcan
         </article>
