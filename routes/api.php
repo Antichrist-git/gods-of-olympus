@@ -10,6 +10,8 @@ Route::get('/user', function (Request $request) {
 })->middleware('auth:api');
 
 Route::middleware('auth:api')->group(function () {
+    Route::post('comments', [CommentController::class, 'store']);
+    Route::put('comments/{id}', [CommentController::class, 'update'])->whereNumber('id');
     Route::get('comments', [CommentController::class, 'index']);
     Route::get('comments/{id}', [CommentController::class, 'show'])->whereNumber('id');
     Route::post('gods', [GodController::class, 'store']);
