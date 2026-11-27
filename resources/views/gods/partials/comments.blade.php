@@ -20,6 +20,14 @@
             @endif
             <time class="small text-secondary ms-2" datetime="{{ $comment->created_at->toAtomString() }}">{{ $comment->created_at->format('d.m.Y H:i') }}</time>
             <p class="preserve-lines mt-2 mb-0">{{ $comment->body }}</p>
+            @can('delete-comment')
+                <form method="POST" action="{{ route('gods.comments.destroy', [$god, $comment]) }}"
+                      onsubmit="return confirm('Удалить этот комментарий без возможности восстановления?')">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="btn btn-sm btn-outline-danger mt-2">Удалить комментарий</button>
+                </form>
+            @endcan
         </article>
     @empty
         <p class="text-secondary">Комментариев пока нет.</p>

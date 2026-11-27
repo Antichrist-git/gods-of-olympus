@@ -9,6 +9,13 @@ use Illuminate\Http\Request;
 
 class CommentController extends Controller
 {
+    public function destroy(God $god, Comment $comment): RedirectResponse
+    {
+        $comment->delete();
+
+        return redirect()->to(route('gods.show', $god).'#comments')->with('success', 'Комментарий удалён.');
+    }
+
     public function store(Request $request, God $god): RedirectResponse
     {
         $data = $request->validate(['body' => ['required', 'string', 'max:2000']], [

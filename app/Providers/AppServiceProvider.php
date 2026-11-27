@@ -32,6 +32,7 @@ class AppServiceProvider extends ServiceProvider
             ]);
         });
 
+        Gate::define('delete-comment', fn (User $user) => $user->is_admin);
         Gate::define('manage-archive', fn (User $user) => $user->is_admin);
 
         // Администратор может управлять карточками всех владельцев.
