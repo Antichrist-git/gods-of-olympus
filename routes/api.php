@@ -12,6 +12,8 @@ Route::get('/user', function (Request $request) {
 Route::middleware('auth:api')->group(function () {
     Route::get('comments', [CommentController::class, 'index']);
     Route::get('comments/{id}', [CommentController::class, 'show'])->whereNumber('id');
+    Route::post('gods', [GodController::class, 'store']);
+    Route::put('gods/{god}', [GodController::class, 'update'])->middleware('can:manage-god,god');
     Route::get('gods', [GodController::class, 'index']);
     Route::get('gods/{id}', [GodController::class, 'show'])->whereNumber('id');
 });
