@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ApiTokenController;
 use App\Http\Controllers\ArchivedGodController;
 use App\Http\Controllers\CollectionController;
 use App\Http\Controllers\CommentController;
@@ -18,6 +19,7 @@ Route::resource('gods', GodController::class)
     ->middlewareFor(['edit', 'update', 'destroy'], 'can:manage-god,god');
 
 Route::middleware('auth')->group(function () {
+    Route::post('profile/api-token', ApiTokenController::class)->middleware('throttle:5,1')->name('profile.api-token');
     Route::delete('gods/{god}/comments/{comment}', [CommentController::class, 'destroy'])
         ->scopeBindings()->middleware('can:delete-comment')->name('gods.comments.destroy');
     Route::get('feed', [FeedController::class, 'index'])->name('feed.index');
